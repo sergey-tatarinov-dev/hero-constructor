@@ -18,9 +18,7 @@ public class GridUI extends UI {
 	private final HeroService heroService;
 	private final SuperPowerService superPowerService;
 	private VerticalLayout layout;
-	private HorizontalLayout content;
 	private HeroForm heroForm;
-	private TextField filterText;
 	private Grid<Hero> grid;
 
 	@Autowired
@@ -44,7 +42,6 @@ public class GridUI extends UI {
 	private void setupLayout() {
 		heroForm = new HeroForm(this, heroService, superPowerService);
 		grid = new Grid<>();
-		filterText = new TextField();
 		layout = new VerticalLayout();
 		layout.setSpacing(true);
 		layout.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);

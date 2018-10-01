@@ -110,7 +110,7 @@ public class HeroForm extends FormLayout {
 				Hero hero = (Hero) entity;
 				imagePath.append("/src/main/resources/images/heroes/");
 				imagePath.append(hero.getId());
-			} else if (entity instanceof SuperPower) {
+			} else {
 				SuperPower superPower = (SuperPower) entity;
 				imagePath.append("/src/main/resources/images/superpowers/");
 				imagePath.append(superPower.getId());

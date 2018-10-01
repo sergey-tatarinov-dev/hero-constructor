@@ -1,7 +1,5 @@
 package com.constructor.hero.app.service;
 
-import com.constructor.hero.app.HeroChangeListener;
-import com.constructor.hero.app.HeroLayout;
 import com.constructor.hero.app.entity.Hero;
 import com.constructor.hero.app.entity.SuperPower;
 import com.constructor.hero.app.repository.HeroRepository;
@@ -17,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class HeroService extends VerticalLayout implements HeroChangeListener {
+public class HeroService extends VerticalLayout {
 
 	private final HeroRepository heroRepository;
 	private final SuperPowerRepository superPowerRepository;
@@ -31,18 +29,6 @@ public class HeroService extends VerticalLayout implements HeroChangeListener {
 	@PostConstruct
 	void init() {
 		setSpacing(true);
-		update();
-	}
-
-	private void update() {
-		setHeroes(getAll());
-	}
-
-	private void setHeroes(List<Hero> heroes) {
-		removeAllComponents();
-		heroes.forEach(hero -> {
-			addComponent(new HeroLayout(hero, this));
-		});
 	}
 
 	public void save(Hero hero, List<ComboBox<String>> list) {
@@ -56,12 +42,6 @@ public class HeroService extends VerticalLayout implements HeroChangeListener {
 			hero.setSuperPowers(superPowers);
 		}
 		heroRepository.saveAndFlush(hero);
-		update();
-	}
-
-	@Override
-	public void heroChanged(Hero hero) {
-		save(hero, null);
 	}
 
 	public List<Hero> getAll() {

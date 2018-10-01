@@ -1,6 +1,5 @@
 package com.constructor.hero.app.service;
 
-import com.constructor.hero.app.SuperPowerLayout;
 import com.constructor.hero.app.entity.SuperPower;
 import com.constructor.hero.app.repository.SuperPowerRepository;
 import com.vaadin.ui.VerticalLayout;
@@ -23,23 +22,10 @@ public class SuperPowerService extends VerticalLayout {
 	@PostConstruct
 	void init() {
 		setSpacing(true);
-		update();
-	}
-
-	private void update() {
-		setSuperPowers(superPowerRepository.findAll());
-	}
-
-	private void setSuperPowers(List<SuperPower> superPowers) {
-		removeAllComponents();
-		superPowers.forEach(superPower -> {
-			addComponent(new SuperPowerLayout(superPower, this));
-		});
 	}
 
 	public void save(SuperPower superPower) {
 		superPowerRepository.save(superPower);
-		update();
 	}
 
 	public List<SuperPower> getAll() {
