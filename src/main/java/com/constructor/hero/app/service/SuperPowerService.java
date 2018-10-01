@@ -13,8 +13,12 @@ import java.util.List;
 @Service
 public class SuperPowerService extends VerticalLayout {
 
+	private final SuperPowerRepository superPowerRepository;
+
 	@Autowired
-	private SuperPowerRepository superPowerRepository;
+	public SuperPowerService(SuperPowerRepository superPowerRepository) {
+		this.superPowerRepository = superPowerRepository;
+	}
 
 	@PostConstruct
 	void init() {

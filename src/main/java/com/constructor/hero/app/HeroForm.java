@@ -13,6 +13,10 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringUI
 public class HeroForm extends FormLayout {
@@ -22,8 +26,15 @@ public class HeroForm extends FormLayout {
 	private TextField name = new TextField("Name");
 	private TextField description = new TextField("Description");
 	private Button save = new Button("Save");
+	private Button addSuperPower = new Button("Add superpower");
 	private Button delete = new Button("Delete");
-	private CssLayout superPowers = new CssLayout();
+	private CssLayout superPowersList = new CssLayout();
+	private HorizontalLayout buttons;
+	private List<ComboBox<String>> superPowers = new ArrayList<>();
+	private ComboBox<String> firstSuperPower = new ComboBox<>("Superpowers");
+	private ComboBox<String> secondSuperPower = new ComboBox<>();
+	private ComboBox<String> thirdSuperPower = new ComboBox<>();
+	private ComboBox<String> fourthSuperPower = new ComboBox<>();
 
 	private HeroService heroService;
 	private SuperPowerService superPowerService;
@@ -38,18 +49,18 @@ public class HeroForm extends FormLayout {
 		this.superPowerService = superPowerService;
 		setSizeUndefined();
 
-		HorizontalLayout buttons = new HorizontalLayout(save, delete);
-		addComponents(heroImage, name, description, buttons);
+		buttons = new HorizontalLayout(save, delete);
+		addComponents(heroImage, name, description);
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
 		save.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
 		binder.bindInstanceFields(this);
 
-		//superpowers.setItems(hero.getSuperPowerList().stream().map(SuperPower::getName).collect(Collectors.toList()));
-		superPowers.setCaption("Superpowers");
+		superPowers.addAll(Arrays.asList(firstSuperPower, secondSuperPower, thirdSuperPower, fourthSuperPower));
+		superPowersList.setCaption("Superpowers");
 
-		save.addClickListener(event -> save());
 		delete.addClickListener(event -> delete());
+		addSuperPower.setVisible(false);
 	}
 
 	public void setHero(Hero hero) {
@@ -60,18 +71,30 @@ public class HeroForm extends FormLayout {
 		heroImage.setDescription(hero.getDescription());
 		heroImage.setVisible(true);
 
-		superPowers.removeAllComponents();
+		superPowersList.removeAllComponents();
 
-		hero.getSuperPowerList().forEach(superpower -> {
-			Image image = new Image();
-			image.setIcon(new FileResource(createFileFromEntity(superpower)));
-			image.setDescription(superpower.getName() + "\n\n" + superpower.getDescription());
-			image.setVisible(true);
-
-			superPowers.addComponent(image);
-		});
-
-		addComponent(superPowers);
+		if (hero.getSuperPowers().isEmpty()) {
+			save.addClickListener(event -> save(Arrays.asList(firstSuperPower, secondSuperPower, thirdSuperPower, fourthSuperPower)));
+			superPowers.forEach(comboBox -> {
+				comboBox.clear();
+				comboBox.setItems(superPowerService.getAll().stream().map(SuperPower::getName).collect(Collectors.toList()));
+				addComponent(comboBox);
+			});
+			removeComponent(superPowersList);
+		} else {
+			save.addClickListener(event -> save(null));
+			hero.getSuperPowers().forEach(superpower -> {
+				Image image = new Image();
+				image.setIcon(new FileResource(createFileFromEntity(superpower)));
+				image.setDescription(superpower.getName() + "\n\n" + superpower.getDescription());
+				image.setVisible(true);
+				superPowers.forEach(this::removeComponent);
+				superPowersList.addComponent(image);
+				addComponent(superPowersList);
+			});
+		}
+		gridUI.updateList();
+		addComponents(buttons);
 
 		delete.setVisible(hero.isPersisted());
 		setVisible(true);
@@ -79,15 +102,19 @@ public class HeroForm extends FormLayout {
 	}
 
 	private File createFileFromEntity(Object entity) {
+		Image image = new Image();
+		image.setVisible(true);
 		StringBuilder imagePath = new StringBuilder(System.getProperty("user.dir"));
-		if (entity instanceof Hero) {
-			Hero hero = (Hero) entity;
-			imagePath.append("/src/main/resources/images/heroes/");
-			imagePath.append(hero.getId());
-		} else if (entity instanceof SuperPower) {
-			SuperPower superPower = (SuperPower) entity;
-			imagePath.append("/src/main/resources/images/superpowers/");
-			imagePath.append(superPower.getId());
+		if (entity instanceof Hero || entity instanceof SuperPower) {
+			if (entity instanceof Hero) {
+				Hero hero = (Hero) entity;
+				imagePath.append("/src/main/resources/images/heroes/");
+				imagePath.append(hero.getId());
+			} else if (entity instanceof SuperPower) {
+				SuperPower superPower = (SuperPower) entity;
+				imagePath.append("/src/main/resources/images/superpowers/");
+				imagePath.append(superPower.getId());
+			}
 		}
 		imagePath.append(".gif");
 		return new File(String.valueOf(imagePath));
@@ -98,8 +125,8 @@ public class HeroForm extends FormLayout {
 		gridUI.updateList();
 	}
 
-	private void save() {
-		heroService.save(hero);
+	private void save(List<ComboBox<String>> list) {
+		heroService.save(hero, list);
 		gridUI.updateList();
 	}
 

@@ -3,8 +3,8 @@ package com.constructor.hero.app.entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity(name = "Hero")
@@ -24,22 +24,18 @@ public class Hero {
 	@Column(name = "description")
 	private String description;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "Hero_Superpower",
 			joinColumns = @JoinColumn(name = "id_hero"),
 			inverseJoinColumns = @JoinColumn(name = "id_superpower")
 	)
-	private List<SuperPower> superPowerList = new ArrayList<>();
+	private Set<SuperPower> superPowers = new HashSet<>();
 
 	public Hero() {
-	}
-
-	public Hero(String name, String description) {
-		this.name = name;
-		this.description = description;
 	}
 
 	public boolean isPersisted() {
 		return id != null;
 	}
 }
+
