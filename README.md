@@ -1,5 +1,16 @@
 # Hero application
 
+## Uses
+1. JDK 8
+2. Spring Boot
+3. Vaadin Framework
+4. H2
+5. Hibernate
+6. Maven
+7. Lombok
+
+## Features
+
 User can:
 - view the list of heroes
 - create heroes
