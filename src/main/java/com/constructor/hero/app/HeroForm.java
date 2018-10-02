@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class HeroForm extends FormLayout {
 
 	private Image heroImage = new Image();
-
 	private TextField name = new TextField("Name");
 	private TextField description = new TextField("Description");
 	private Button save = new Button("Save");
@@ -30,6 +29,7 @@ public class HeroForm extends FormLayout {
 	private Button delete = new Button("Delete");
 	private CssLayout superPowersList = new CssLayout();
 	private HorizontalLayout buttons;
+
 	private List<ComboBox<String>> superPowers = new ArrayList<>();
 	private ComboBox<String> firstSuperPower = new ComboBox<>("Superpowers");
 	private ComboBox<String> secondSuperPower = new ComboBox<>();
@@ -48,7 +48,6 @@ public class HeroForm extends FormLayout {
 		this.heroService = heroService;
 		this.superPowerService = superPowerService;
 		setSizeUndefined();
-
 		buttons = new HorizontalLayout(save, delete);
 		addComponents(heroImage, name, description);
 		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
@@ -66,7 +65,6 @@ public class HeroForm extends FormLayout {
 	public void setHero(Hero hero) {
 		this.hero = hero;
 		binder.setBean(hero);
-
 		heroImage.setIcon(new FileResource(createFileFromEntity(hero)));
 		heroImage.setDescription(hero.getDescription());
 		heroImage.setVisible(true);
@@ -102,8 +100,6 @@ public class HeroForm extends FormLayout {
 	}
 
 	private File createFileFromEntity(Object entity) {
-		Image image = new Image();
-		image.setVisible(true);
 		StringBuilder imagePath = new StringBuilder(System.getProperty("user.dir"));
 		if (entity instanceof Hero || entity instanceof SuperPower) {
 			if (entity instanceof Hero) {
