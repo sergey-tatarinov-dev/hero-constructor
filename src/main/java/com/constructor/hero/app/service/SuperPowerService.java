@@ -4,6 +4,7 @@ import com.constructor.hero.app.entity.SuperPower;
 import com.constructor.hero.app.repository.SuperPowerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class SuperPowerService {
 		this.superPowerRepository = superPowerRepository;
 	}
 
+	@Transactional
 	public void save(SuperPower superPower) {
 		superPowerRepository.save(superPower);
 	}
@@ -25,8 +27,8 @@ public class SuperPowerService {
 		return superPowerRepository.findAll();
 	}
 
-	public void remove(Object item) {
-		SuperPower superPower = (SuperPower) item;
+	@Transactional
+	public void remove(SuperPower superPower) {
 		superPowerRepository.delete(superPower);
 	}
 
